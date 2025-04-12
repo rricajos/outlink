@@ -1,8 +1,3 @@
----
-
-## 📄 `README.md`
-
-```markdown
 # 🔗 OutLink — Microsoft 365 Login URL Generator
 
 **OutLink** is a lightweight web-based tool for generating Microsoft 365 login URLs with a pre-filled email address. Ideal for internal tools, login portals, or support workflows where users frequently need to log into Outlook, Teams, OneDrive, or SharePoint.
