@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>OutLink - Microsoft 365 Login Tool</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Custom Styles -->
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .container {
+        max-width: 800px;
+      }
+      textarea {
+        resize: none;
+      }
+      .section-divider {
+        border-top: 2px solid #dee2e6;
+        margin: 3rem 0;
+      }
+    
+      /* --- Dark Mode Styling --- */
+      body.dark-mode {
+        background-color: #121212;
+        color: #f1f1f1;
+      }
+    
+      body.dark-mode .card,
+      body.dark-mode .form-control,
+      body.dark-mode .form-select,
+      body.dark-mode textarea,
+      body.dark-mode input,
+      body.dark-mode select {
+        background-color: #1e1e1e !important;
+        color: #f1f1f1 !important;
+        border-color: #444 !important;
+      }
+    
+      body.dark-mode .form-label,
+      body.dark-mode label {
+        color: #f1f1f1;
+      }
+    
+      body.dark-mode .form-text,
+      body.dark-mode small,
+      body.dark-mode .text-muted {
+        color: #aaa !important;
+      }
+    
+      body.dark-mode .btn-outline-secondary {
+        border-color: #ccc;
+        color: #ccc;
+      }
+    
+      body.dark-mode .btn-outline-secondary:hover {
+        background-color: #2c2c2c;
+        border-color: #aaa;
+      }
+    
+      body.dark-mode .table {
+        background-color: #1e1e1e;
+        color: #f1f1f1;
+        border-color: #444;
+      }
+    
+      body.dark-mode .table th,
+      body.dark-mode .table td {
+        background-color: #1e1e1e;
+        color: #f1f1f1;
+        border-color: #444;
+      }
+    
+      body.dark-mode .table-striped > tbody > tr:nth-of-type(odd) {
+        background-color: #1a1a1a;
+      }
+    
+      body.dark-mode .table thead,
+      body.dark-mode .table-light {
+        background-color: #2c2c2c !important;
+        color: #ffffff !important;
+        border-color: #444 !important;
+      }
+    
+      body.dark-mode .table-bordered {
+        border-color: #444;
+      }
+    
+      body.dark-mode .table-sm th,
+      body.dark-mode .table-sm td {
+        padding: 0.3rem 0.6rem;
+      }
+    
+      body.dark-mode .section-divider {
+        border-top: 2px solid #333;
+      }
+    
+      body.dark-mode a {
+        color: #82b1ff;
+      }
+    
+      body.dark-mode a:hover {
+        color: #aac8ff;
+      }
+    
+      body.dark-mode .invalid-feedback {
+        color: #ff7675;
+      }
+    
+      body.dark-mode .btn-primary {
+        background-color: #0062cc;
+        border-color: #005cbf;
+      }
+    
+      body.dark-mode .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #004a99;
+      }
+    </style>
+    
+  </head>
+
+  <body>
+    <div class="container py-5">
+      <!-- Header -->
+      <header class="text-center mb-5">
+        <h1 class="display-4 fw-bold">🔗 OutLink 🔗</h1>
+        
+        <div class="text-center my-4 d-flex justify-content-center gap-3 flex-wrap">
+          <button class="btn btn-outline-danger" onclick="resetConfiguration()">
+            Reset Configuration
+          </button>
+          <button class="btn btn-outline-secondary" id="toggle-mode" onclick="toggleMode()">
+            🌙 Dark Mode
+          </button>
+        </div>
+      </header>
+
+      <main>
+        <!-- Link Generator Form -->
+        <section>
+          <h2 class="h4 mb-3">Generate Login URL</h2>
+          <form id="url-generator" class="needs-validation row g-3" novalidate>
+            <!-- Service Selector -->
+            <div class="col-md-12">
+              <label for="service" class="form-label">Target Service:</label>
+              <select class="form-select" id="service" required>
+                <option value="outlook">Outlook</option>
+                <option value="teams">Teams</option>
+                <option value="onedrive">OneDrive</option>
+                <option value="sharepoint">SharePoint</option>
+              </select>
+            </div>
+
+            <!-- Username and Domain -->
+            <div class="col-md-8">
+              <label for="username" class="form-label">Username:</label>
+              <div class="input-group has-validation">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="username"
+                  name="username"
+                  placeholder="first.last"
+                  required
+                />
+                <select class="form-select" id="domain">
+                  <!-- Domains loaded dynamically -->
+                </select>
+                <div class="invalid-feedback">This field is required.</div>
+              </div>
+            </div>
+
+            <!-- Submit button -->
+            <div class="col-md-4 d-grid align-self-end">
+              <button type="submit" class="btn btn-primary">Generate URL</button>
+            </div>
+          </form>
+
+          <!-- Output URL -->
+          <div class="mt-4">
+            <label for="result" class="form-label">🔗 Generated URL:</label>
+            <textarea
+              id="result"
+              class="form-control"
+              rows="3"
+              readonly
+              style="display: none"
+            ></textarea>
+            <div id="message" class="form-text text-success mt-2"></div>
+          </div>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Description -->
+        <section>
+          <h2 class="h4 mb-3">📘 What is this tool?</h2>
+          <p>
+            This tool generates personalized login URLs for Microsoft 365 services,
+            pre-filling the email field for faster authentication. It's useful for internal tools, portals, or quick access.
+          </p>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Technical Info -->
+        <section>
+          <h2 class="h4 mb-3">🧠 Technical Information</h2>
+          <p>
+            The generated URL uses standard OAuth 2.0 parameters and the
+            <code>login_hint</code> query parameter to pre-fill the email field on the Microsoft login page.
+            No data is stored on the server — everything runs locally in the browser.
+          </p>
+          <table class="table table-bordered table-sm">
+            <thead class="table-light">
+              <tr>
+                <th>Parameter</th>
+                <th>Value</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>client_id</code></td>
+                <td>1b730954-1685-4b74-9bfd-dac224a7b894</td>
+                <td>Microsoft public client ID</td>
+              </tr>
+              <tr>
+                <td><code>response_type</code></td>
+                <td>code</td>
+                <td>Authorization code grant (OAuth 2.0)</td>
+              </tr>
+              <tr>
+                <td><code>redirect_uri</code></td>
+                <td>https://localhost</td>
+                <td>Required field — not used for redirection</td>
+              </tr>
+              <tr>
+                <td><code>scope</code></td>
+                <td>openid</td>
+                <td>Minimum required scope for login</td>
+              </tr>
+              <tr>
+                <td><code>login_hint</code></td>
+                <td><em>user@domain.com</em></td>
+                <td>Email to pre-fill in the login form</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <div class="section-divider"></div>
+
+        <!-- Domain Management Section -->
+        <section>
+          <h2 class="h4 mb-3">🛠️ Domain Management</h2>
+          <form class="row g-3 mb-4" id="add-domain-form" onsubmit="return false;">
+            <div class="col-md-8">
+              <input
+                type="text"
+                class="form-control"
+                id="new-domain"
+                placeholder="@example.com"
+                required
+              />
+            </div>
+            <div class="col-md-4 d-grid">
+              <button id="domain-action-btn" class="btn btn-success" onclick="addDomain()">
+                 Add Domain
+              </button>
+            </div>
+          </form>
+
+          <!-- Domains table -->
+          <table class="table table-striped" id="domain-table">
+            <thead class="table-light">
+              <tr>
+                <th>Domain</th>
+                <th style="width: 220px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Domains rendered dynamically -->
+            </tbody>
+          </table>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="mt-5 text-center text-muted border-top pt-4">
+        <small>
+          © 2025 MS ZapLink Builder | 
+          <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" target="_blank">View on GitHub</a>
+        </small>
+      </footer>
+    </div>
+
+    <!-- Bootstrap Bundle JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Script -->
+    <script src="outlink.js"></script>
+
+    <!-- Bootstrap form validation -->
+    <script>
+      (() => {
+        "use strict";
+        const form = document.querySelector(".needs-validation");
+        form.addEventListener("submit", (event) => {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add("was-validated");
+        }, false);
+      })();
+    </script>
+  </body>
+</html>
