@@ -88,21 +88,24 @@ function addDomain() {
   updateDomains();
 }
 
-
 // --- Edit Domain ---
 function editDomain(index) {
   const input = document.getElementById("new-domain");
   const button = document.getElementById("domain-action-btn");
 
+  // Fill the input with the selected domain
   input.value = domains[index];
   input.focus();
-  editingIndex = index;
-  button.innerHTML = "💾 Save Changes";
-  button.style.borderColor = '#ffca2c';
-  button.style.backgroundColor = '#ffc107';
-  button.style.color = '#000';
 
+  // Store the index being edited
+  editingIndex = index;
+
+  // Change button appearance and label
+  button.innerHTML = "💾 Save Changes";
+  button.classList.remove("btn-success");
+  button.classList.add("btn-warning");
 }
+
 
 
 // --- Delete Domain ---
